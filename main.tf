@@ -3,6 +3,7 @@ variable "region" {
 }
 
 variable "accountId" {}
+variable "domain" {}
 
 provider "aws" {
   region = "${var.region}"
@@ -25,8 +26,18 @@ data "terraform_remote_state" "network" {
   }
 }
 
+data "aws_acm_certificate" "api_cert" {
+  domain   = "treeapi.${var.domain}"
+  statuses = ["ISSUED"]
+}
+
+data "aws_route53_zone" "app_domain" {
+  name         = "${var.domain}."
+  private_zone = false
+}
+
 # base role that lambdas will execute as
-resource "aws_iam_role" "lambda-base-execution-role" {
+resource "aws_iam_role" "lambda_base_execution_role" {
   name = "lambda-base-execution-role"
 
   assume_role_policy = <<EOF
@@ -47,16 +58,16 @@ EOF
 }
 
 # give base lambda role permissions to actually create logs
-resource "aws_iam_policy_attachment" "lambda-base-execution-role-cloudwatch-policy" {
+resource "aws_iam_policy_attachment" "lambda_base_execution_role_cloudwatch_policy" {
   name = "default"
-  roles = ["${aws_iam_role.lambda-base-execution-role.name}"]
+  roles = ["${aws_iam_role.lambda_base_execution_role.name}"]
   policy_arn = "arn:aws:iam::aws:policy/AWSLambdaExecute"
 }
 
 resource "aws_lambda_function" "hello_lambda" {
   filename = "hello/target/hello-1.0-SNAPSHOT.jar"
   function_name = "hello_world"
-  role = "${aws_iam_role.lambda-base-execution-role.arn}"
+  role = "${aws_iam_role.lambda_base_execution_role.arn}"
   handler = "com.jshnd.cheaptree.hello.HelloLambda"
   source_code_hash = "${base64sha256(file("hello/target/hello-1.0-SNAPSHOT.jar"))}"
   runtime = "java8"
@@ -93,11 +104,43 @@ resource "aws_lambda_permission" "apigw_lambda_hello" {
 }
 
 # map API resource to lambda
-resource "aws_api_gateway_integration" "HelloWorldResourceIntegration" {
+resource "aws_api_gateway_integration" "hello_world_resource_integration" {
   rest_api_id             = "${aws_api_gateway_rest_api.main_api.id}"
   resource_id             = "${aws_api_gateway_resource.hello_world_resource.id}"
   http_method             = "${aws_api_gateway_method.hello_method.http_method}"
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${aws_lambda_function.hello_lambda.arn}/invocations"
+}
+
+resource "aws_api_gateway_deployment" "main_api_depoyment" {
+  depends_on = ["aws_api_gateway_integration.hello_world_resource_integration"]
+
+  rest_api_id = "${aws_api_gateway_rest_api.main_api.id}"
+  stage_name  = "prod"
+}
+
+resource "aws_api_gateway_domain_name" "main_api_domain_name" {
+  domain_name = "treeapi.${var.domain}"
+
+  certificate_arn  = "${data.aws_acm_certificate.api_cert.arn}"
+}
+
+resource "aws_route53_record" "treeapi_dns_entry" {
+  zone_id = "${data.aws_route53_zone.app_domain.zone_id}"
+
+  name = "${aws_api_gateway_domain_name.main_api_domain_name.domain_name}"
+  type = "A"
+
+  alias {
+    name                   = "${aws_api_gateway_domain_name.main_api_domain_name.cloudfront_domain_name}"
+    zone_id                = "${aws_api_gateway_domain_name.main_api_domain_name.cloudfront_zone_id}"
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_api_gateway_base_path_mapping" "treeapi_domain_base_path_to_prod" {
+  api_id      = "${aws_api_gateway_rest_api.main_api.id}"
+  stage_name  = "${aws_api_gateway_deployment.main_api_depoyment.stage_name}"
+  domain_name = "${aws_api_gateway_domain_name.main_api_domain_name.domain_name}"
 }
