@@ -73,6 +73,38 @@ resource "aws_lambda_function" "hello_lambda" {
   runtime = "java8"
 }
 
+# role for the API gateway
+resource "aws_iam_role" "api_gateway_role" {
+  name = "api-gateway-role"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "apigateway.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+EOF
+}
+
+# give api gateway role permissions to actually create logs
+resource "aws_iam_policy_attachment" "api_gateway_role_cloudwatch_policy" {
+  name = "default"
+  roles = ["${aws_iam_role.api_gateway_role.name}"]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+}
+
+resource "aws_api_gateway_account" "demo" {
+  cloudwatch_role_arn = "${aws_iam_role.api_gateway_role.arn}"
+}
+
 resource "aws_api_gateway_rest_api" "main_api" {
   name        = "CheapTreeAPI"
   description = "REST API for cheap tree"
