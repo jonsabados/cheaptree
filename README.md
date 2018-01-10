@@ -1,4 +1,4 @@
-Assumption: you are deploying to a domain with dns managed by route53
+Assumption: you are deploying to both a paternal and maternal domain with dns managed by route53 (same app with aliases)
 
 Deployment:
 
@@ -11,11 +11,15 @@ export AWS_SECRET_ACCESS_KEY=${YOURSECRETACCESSKEYHERE}
 
 build the code: `mvn package`
 
-request a cert for treeapi.WHATEVERDOMAIN via ACM
+request a cert for ${MATERNAL_DOMAIN} via ACM
+request a cert for api.${MATERNAL_DOMAIN} via ACM
+request a cert for ${PATERNAL_DOMAIN} via ACM
+request a cert for api.${PATERNAL_DOMAIN} via ACM
 
 deploy to aws (you should probably run a plan first):
-`terraform apply`
+`cde aws && terraform apply`
 
-Terraform will prompt for the account ID and domain name, set the following environmental variables to get around this: 
+Terraform will prompt for the account ID and domain names, set the following environmental variables to get around this: 
 * TF_VAR_accountId
-* TF_VAR_domain
+* TF_VAR_maternal_domain
+* TF_VAR_paternal_domain
