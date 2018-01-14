@@ -1,10 +1,9 @@
 Assumption: you are deploying to both a paternal and maternal domain with dns managed by route53 (same app with aliases)
 
-
 Dependencies:
 install terraform (`brew install terraform` on osx)
 install awscli
-install yarn
+install npm
 
 Deployment:
 
@@ -29,8 +28,8 @@ Terraform will prompt for the account ID and domain names, set the following env
 * TF_VAR_paternal_domain
 
 build the front end
-`cd ui && yarn build`
+`cd ui && npm install && pm run build`
 
 push the front end up to s3:
-`aws s3 sync ui/build/ s3://ui.cheaptree`
+`aws s3 sync --delete ui/public/ s3://ui.cheaptree`
 

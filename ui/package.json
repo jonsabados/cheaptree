@@ -1,16 +1,73 @@
 {
   "name": "ui",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "React template.",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server -d --progress --colors",
+    "build": "NODE_ENV=production node_modules/.bin/webpack -p --progress --colors",
+    "test": "BABEL_JEST_STAGE=0 jest",
+    "lint": "eslint app/** __tests__/**",
+    "fix": "eslint app/** __tests__/** --fix"
+  },
+  "author": "",
+  "jest": {
+    "unmockedModulePathPatterns": [
+      "<rootDir>/node_modules/react",
+      "<rootDir>/node_modules/react-dom",
+      "<rootDir>/node_modules/react-addons-test-utils"
+    ],
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    },
+    "moduleFileExtensions": [
+      "js",
+      "json"
+    ],
+    "setupFiles": [
+      "raf/polyfill"
+    ]
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.2.1",
+    "babel-jest": "^22.0.6",
+    "babel-loader": "^7.1.2",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "css-loader": "^0.28.4",
+    "eslint": "^4.15.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-prettier": "^2.4.0",
+    "eslint-plugin-react": "^7.5.1",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^0.11.2",
+    "html-webpack-plugin": "^2.30.1",
+    "jest-cli": "^22.0.6",
+    "prettier": "^1.10.2",
+    "raf": "^3.4.0",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "url-loader": "^0.5.9",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.10.1"
+  },
   "dependencies": {
+    "axios": "^0.17.1",
+    "bootstrap": "^3.3.7",
+    "flux": "^3.1.3",
+    "font-awesome": "^4.7.0",
+    "immutable": "^3.8.2",
+    "node-sass": "^4.5.3",
+    "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-scripts": "1.0.17"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "react-router-dom": "^4.2.2",
+    "react-tap-event-plugin": "^3.0.2"
   }
 }
