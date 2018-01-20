@@ -1,0 +1,7 @@
+const HelloWorldActions = {
+  SAMPLE_RESPONSE_RECEIVED : 'SAMPLE_RESPONSE_RECEIVED',
+  SAMPLE_INPUT_A_CHANGE    : 'SAMPLE_INPUT_A_CHANGE',
+  SAMPLE_INPUT_B_CHANGE    : 'SAMPLE_INPUT_B_CHANGE'
+};
+
+export default HelloWorldActions;

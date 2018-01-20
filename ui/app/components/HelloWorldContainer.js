@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Container } from 'flux/utils';
-import { Link } from 'react-router-dom'
 import HelloWorldStore from '../stores/HelloWorldStore';
+import helloWorldView from '../views/helloWorldView.jsx'
 
 class HelloWorldContainer extends Component {
   static getStores() {
@@ -18,11 +18,7 @@ class HelloWorldContainer extends Component {
   }
 
   render() {
-    return (
-      <div>
-        <h1>Hello World</h1>
-      </div>
-    );
+    return helloWorldView(this.state.sample.get("sampleInput"), this.state.sample.get("sampleResult"));
   }
 }
 
