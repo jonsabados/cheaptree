@@ -1,21 +1,21 @@
 import AppDispatcher from '../dispatcher/AppDispatcher'
 import HelloWorldActions from '../stores/HelloWorldActions'
 
-function aChanged(newValue) {
+function nameChanged(newValue) {
   AppDispatcher.dispatch({
-    type: HelloWorldActions.SAMPLE_INPUT_A_CHANGE,
+    type: HelloWorldActions.SAMPLE_INPUT_NAME_CHANGE,
     newValue: newValue
   });
 }
 
-function bChanged(newValue) {
+function ageChanged(newValue) {
   AppDispatcher.dispatch({
-    type: HelloWorldActions.SAMPLE_INPUT_B_CHANGE,
+    type: HelloWorldActions.SAMPLE_INPUT_AGE_CHANGE,
     newValue: newValue
   });
 }
 
 export {
-  aChanged,
-  bChanged
+  nameChanged,
+  ageChanged
 }

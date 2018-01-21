@@ -5,7 +5,10 @@ import HelloWorldActions from '../stores/HelloWorldActions'
 function sampleFetch(input) {
   apiFetch("/hello", {
     method: "POST",
-    body: JSON.stringify(input)
+    body: JSON.stringify(input),
+    headers: new Headers({
+      'Content-Type': 'application/json'
+    })
   }).then((res) => res.json())
     .then((json) => AppDispatcher.dispatch({
       type: HelloWorldActions.SAMPLE_RESPONSE_RECEIVED,

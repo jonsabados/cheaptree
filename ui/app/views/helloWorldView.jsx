@@ -1,5 +1,5 @@
 import React from 'react';
-import {aChanged, bChanged} from '../actions/sampleUpdates'
+import {nameChanged, ageChanged} from '../actions/sampleUpdates'
 import sampleFetch from '../actions/sampleFetch'
 
 function sampleResultContent(sampleResult) {
@@ -15,20 +15,20 @@ function helloWorldView(sampleInput, sampleResult) {
   return <div>
     <p>Hello world!</p>
     <div>
-      <label htmlFor="inputA">Value a:</label>
+      <label htmlFor="inputName">Name:</label>
       <input className="form-control"
-             id="inputA"
-             placeholder="a"
-             value={sampleInput.a}
-             onChange={(event) => aChanged(event.target.value)}/>
+             id="inputName"
+             placeholder="bob"
+             value={sampleInput.name}
+             onChange={(event) => nameChanged(event.target.value)}/>
     </div>
     <div>
-      <label htmlFor="inputB">Value b:</label>
+      <label htmlFor="inputAge">Age:</label>
       <input className="form-control"
-             id="inputB"
-             placeholder="b"
-             value={sampleInput.b}
-             onChange={(event) => bChanged(event.target.value)}/>
+             id="inputAge"
+             placeholder="29"
+             value={sampleInput.age}
+             onChange={(event) => ageChanged(event.target.value)}/>
     </div>
     <button onClick={() => sampleFetch(sampleInput)}>Send it!</button>
     {sampleResultContent(sampleResult)}

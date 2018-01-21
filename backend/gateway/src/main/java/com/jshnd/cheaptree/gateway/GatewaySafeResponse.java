@@ -1,4 +1,4 @@
-package com.jshnd.cheaptree.hello;
+package com.jshnd.cheaptree.gateway;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

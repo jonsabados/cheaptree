@@ -7,6 +7,8 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
+        <module>gateway</module>
+        <module>cors</module>
         <module>hello</module>
     </modules>
     <name>cheaptree</name>

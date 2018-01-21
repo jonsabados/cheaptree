@@ -1,0 +1,11 @@
+variable resource_name {}
+variable path_to_jar {}
+variable execution_role {}
+variable handler_class {}
+variable region {}
+variable http_method {}
+variable main_api_id {}
+variable parent_resource_id {}
+variable account_id {}
+variable cors_lambda_arn {}
+variable allowed_cors_domains {}

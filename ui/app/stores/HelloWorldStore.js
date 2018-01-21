@@ -14,19 +14,19 @@ class HelloWorldStore extends ReduceStore {
 
   reduce(state, action) {
     switch (action.type) {
-      case HelloWorldActions.SAMPLE_INPUT_A_CHANGE: {
+      case HelloWorldActions.SAMPLE_INPUT_NAME_CHANGE: {
         const oldInput = state.get("sampleInput");
         const newInput = new SampleInput({
-          a: action.newValue,
-          b: oldInput.b
+          name: action.newValue,
+          age: oldInput.age
         });
         return state.set("sampleInput", newInput);
       }
-      case HelloWorldActions.SAMPLE_INPUT_B_CHANGE: {
+      case HelloWorldActions.SAMPLE_INPUT_AGE_CHANGE: {
         const oldInput = state.get("sampleInput");
         const newInput = new SampleInput({
-          a: oldInput.a,
-          b: action.newValue
+          name: oldInput.name,
+          age: action.newValue
         });
         return state.set("sampleInput", newInput);
       }

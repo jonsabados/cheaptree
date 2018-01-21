@@ -1,8 +1,8 @@
 import Immutable from 'immutable';
 
 const SampleInput = Immutable.Record({
-  a : 'a',
-  b : 'b'
+  name : undefined,
+  age : undefined
 });
 
 export default SampleInput;

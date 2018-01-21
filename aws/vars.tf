@@ -6,6 +6,6 @@ variable "version" {
   default = "1.0-SNAPSHOT"
 }
 
-variable "accountId" {}
+variable "account_id" {}
 variable "maternal_domain" {}
 variable "paternal_domain" {}
