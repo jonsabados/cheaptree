@@ -1,0 +1,22 @@
+{
+  "principalId": null,
+  "policyDocument": {
+    "Statement": [
+      {
+        "Resource": [],
+        "Condition": {},
+        "Action": "execute-api:Invoke",
+        "Effect": "Allow"
+      },
+      {
+        "Resource": [
+          "arn:aws:execute-api:us-east-1:someAccount:someApiID/someStage/*/*"
+        ],
+        "Condition": {},
+        "Action": "execute-api:Invoke",
+        "Effect": "Deny"
+      }
+    ],
+    "Version": "2012-10-17"
+  }
+}

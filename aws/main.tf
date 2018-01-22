@@ -49,6 +49,24 @@ resource "aws_iam_policy_attachment" "lambda_base_execution_role_cloudwatch_poli
   policy_arn = "arn:aws:iam::aws:policy/AWSLambdaExecute"
 }
 
+resource "aws_cloudwatch_log_group" "authorizer_lambda_log_group" {
+  name              = "/aws/lambda/authorizer_lambda"
+  retention_in_days = 14
+}
+
+resource "aws_lambda_function" "authorizer_lambda_function" {
+  filename         = "../backend/authorizer/target/authorizer-${var.version}.jar"
+  function_name    = "authorizer_lambda"
+  role             = "${aws_iam_role.lambda_base_execution_role.arn}"
+  handler          = "com.jshnd.cheaptree.authorizer.AuthorizerLambda"
+  source_code_hash = "${base64sha256(file("../backend/authorizer/target/authorizer-${var.version}.jar"))}"
+  runtime          = "java8"
+  environment {
+    variables {
+      GOOGLE_CLIENT_ID = "${var.google_client_id}"
+    }
+  }
+}
 
 # role for the API gateway
 resource "aws_iam_role" "api_gateway_role" {
@@ -79,6 +97,25 @@ resource "aws_iam_policy_attachment" "api_gateway_role_cloudwatch_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
 }
 
+# give api gateway role permission to invoke authorizor lambda
+resource "aws_iam_role_policy" "api_gateway_role_cloudwatch_policy_invoke_authorizer_policy" {
+  name = "default"
+  role = "${aws_iam_role.api_gateway_role.id}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "lambda:InvokeFunction",
+      "Effect": "Allow",
+      "Resource": "${aws_lambda_function.authorizer_lambda_function.arn}"
+    }
+  ]
+}
+EOF
+}
+
 resource "aws_api_gateway_account" "gateway_account_settings" {
   cloudwatch_role_arn = "${aws_iam_role.api_gateway_role.arn}"
 }
@@ -106,6 +143,13 @@ resource "aws_api_gateway_method_settings" "api_gateway_logging" {
     metrics_enabled = true
     logging_level   = "INFO"
   }
+}
+
+resource "aws_api_gateway_authorizer" "api_gateway_authorizer" {
+  name                   = "demo"
+  rest_api_id            = "${aws_api_gateway_rest_api.main_api.id}"
+  authorizer_uri         = "${aws_lambda_function.authorizer_lambda_function.invoke_arn}"
+  authorizer_credentials = "${aws_iam_role.api_gateway_role.arn}"
 }
 
 resource "aws_cloudwatch_log_group" "api_gateway_logs" {
@@ -157,18 +201,19 @@ resource "aws_lambda_function" "cors_lambda_function" {
 }
 
 module "hello_world_resource" {
-  source             = "api_resource"
-  resource_name      = "hello_world"
-  path_to_jar        = "../backend/hello/target/hello-${var.version}.jar"
-  handler_class      = "com.jshnd.cheaptree.hello.HelloLambda"
-  execution_role     = "${aws_iam_role.lambda_base_execution_role.arn}"
-  region             = "${var.region}"
-  http_method        = "POST"
-  main_api_id        = "${aws_api_gateway_rest_api.main_api.id}"
-  parent_resource_id = "${aws_api_gateway_rest_api.main_api.root_resource_id}"
-  account_id         = "${var.account_id}"
-  cors_lambda_arn    = "${aws_lambda_function.cors_lambda_function.arn}"
+  source               = "api_resource"
+  resource_name        = "hello_world"
+  path_to_jar          = "../backend/hello/target/hello-${var.version}.jar"
+  handler_class        = "com.jshnd.cheaptree.hello.HelloLambda"
+  execution_role       = "${aws_iam_role.lambda_base_execution_role.arn}"
+  region               = "${var.region}"
+  http_method          = "POST"
+  main_api_id          = "${aws_api_gateway_rest_api.main_api.id}"
+  parent_resource_id   = "${aws_api_gateway_rest_api.main_api.root_resource_id}"
+  account_id           = "${var.account_id}"
+  cors_lambda_arn      = "${aws_lambda_function.cors_lambda_function.arn}"
   allowed_cors_domains = "https://${var.maternal_domain},https://${var.paternal_domain}"
+  authorizer_id        = "${aws_api_gateway_authorizer.api_gateway_authorizer.id}"
 }
 
 module "maternal_domain" {

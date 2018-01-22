@@ -9,3 +9,4 @@ variable "version" {
 variable "account_id" {}
 variable "maternal_domain" {}
 variable "paternal_domain" {}
+variable "google_client_id" {}

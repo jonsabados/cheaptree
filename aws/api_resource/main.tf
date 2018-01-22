@@ -47,7 +47,8 @@ resource "aws_api_gateway_method" "gateway_method" {
   rest_api_id   = "${var.main_api_id}"
   resource_id   = "${aws_api_gateway_resource.gateway_resource.id}"
   http_method   = "${var.http_method}"
-  authorization = "NONE"
+  authorization = "CUSTOM"
+  authorizer_id = "${var.authorizer_id}"
 }
 
 resource "aws_api_gateway_method" "gateway_method_cors" {

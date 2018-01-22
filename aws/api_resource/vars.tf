@@ -9,3 +9,4 @@ variable parent_resource_id {}
 variable account_id {}
 variable cors_lambda_arn {}
 variable allowed_cors_domains {}
+variable authorizer_id {}

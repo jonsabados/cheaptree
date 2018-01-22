@@ -1,0 +1,23 @@
+{
+  "principalId": "Bob",
+  "policyDocument": {
+    "Statement": [
+      {
+        "Resource": [
+          "arn:aws:execute-api:us-east-1:someAccount:someApiID/someStage/*/*"
+        ],
+        "Effect": "Allow",
+        "Action": "execute-api:Invoke",
+        "Condition": {}
+      },
+      {
+        "Resource": [],
+        "Effect": "Deny",
+        "Action": "execute-api:Invoke",
+        "Condition": {}
+      }
+    ],
+    "Version": "2012-10-17"
+  }
+}
+

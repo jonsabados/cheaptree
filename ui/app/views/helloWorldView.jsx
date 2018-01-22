@@ -1,6 +1,16 @@
 import React from 'react';
 import {nameChanged, ageChanged} from '../actions/sampleUpdates'
 import sampleFetch from '../actions/sampleFetch'
+import { GoogleLogin, GoogleLogout }from 'react-google-login';
+
+const responseGoogle = (response) => {
+  console.log(response);
+  console.log(response.hg);
+};
+
+const logout = () => {
+  console.log("Logged out");
+};
 
 function sampleResultContent(sampleResult) {
   if (sampleResult) {
@@ -32,6 +42,16 @@ function helloWorldView(sampleInput, sampleResult) {
     </div>
     <button onClick={() => sampleFetch(sampleInput)}>Send it!</button>
     {sampleResultContent(sampleResult)}
+    <GoogleLogin
+      clientId="802743688838-6a65glf1ldg20mgl12va2c0j3pgkao6l.apps.googleusercontent.com"
+      onSuccess={responseGoogle}
+      onFailure={responseGoogle}
+      isSignedIn={true}
+    />
+    <GoogleLogout
+      buttonText="Logout"
+      onLogoutSuccess={logout}
+    />
   </div>;
 }
 

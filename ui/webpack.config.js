@@ -1,6 +1,7 @@
 const webpack = require("webpack");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require("path");
 
 const htmlPluginConfig = {
@@ -12,7 +13,7 @@ const config = {
   devtool: "inline-source-map",
   entry: [
     path.resolve(__dirname, "app/App.js"),
-    path.resolve(__dirname, "app/css/application.scss"),
+    path.resolve(__dirname, "app/css/application.scss")
   ],
   output: {
     path: path.resolve(__dirname, "public/"),
@@ -84,7 +85,10 @@ if (process.env.NODE_ENV === "production") {
     new webpack.optimize.UglifyJsPlugin({ comments: false }),
     new webpack.DefinePlugin({
       "process.env": { NODE_ENV: JSON.stringify("production") }
-    })
+    }),
+    new CopyWebpackPlugin([
+      { from: 'app/static', ignore: [ '.gitignore' ] }
+    ])
   ];
 }
 

@@ -12,26 +12,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GatwayLambdaUtil {
+public class GatewayLambdaUtil {
 
-    private static final Logger LOG = LogManager.getLogger(GatwayLambdaUtil.class);
+    public static final int HTTP_STATUS_OK = 200;
+    public static final int HTTP_STATUS_NO_CONTENT = 204;
+
+    private static final Logger LOG = LogManager.getLogger(GatewayLambdaUtil.class);
 
     private final List<String> allowedDomains;
 
     private final ObjectMapper mapper;
 
-    public GatwayLambdaUtil(final ObjectMapper mapper) {
+    public GatewayLambdaUtil(final ObjectMapper mapper) {
         allowedDomains = Arrays.asList(System.getenv("ALLOWED_CORS_DOMAINS").split(","));
         this.mapper = mapper;
     }
 
     /**
-     * Marshalls API-Gateway lambda-proxied requests into a usable object. Also does some sanity like making case
+     * Marshals API-Gateway lambda-proxied requests into a usable object. Also does some sanity like making case
      * on header names consistent (they will all be converted to lower case).
      *
      * @param in input stream provided to the lambda
-     * @return
-     * @throws IOException
+     * @return Information passed by the API gateway
+     * @throws IOException if anything goes wrong reading the input
      */
     public GatewayBasedRequest readInput(final InputStream in) throws IOException {
         final GatewayBasedRequest withMixedHeaderCase = mapper.readValue(in, GatewayBasedRequest.class);

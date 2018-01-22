@@ -1,0 +1,5 @@
+{
+  "type":"TOKEN",
+  "authorizationToken":"123",
+  "methodArn":"arn:aws:execute-api:us-east-1:someAccount:someApiID/someStage/GET/someResource"
+}
