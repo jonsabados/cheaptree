@@ -61,6 +61,8 @@ resource "aws_lambda_function" "authorizer_lambda_function" {
   handler          = "com.jshnd.cheaptree.authorizer.AuthorizerLambda"
   source_code_hash = "${base64sha256(file("../backend/authorizer/target/authorizer-${var.version}.jar"))}"
   runtime          = "java8"
+  memory_size      = 192
+  timeout          = 120
   environment {
     variables {
       GOOGLE_CLIENT_ID = "${var.google_client_id}"
@@ -99,8 +101,8 @@ resource "aws_iam_policy_attachment" "api_gateway_role_cloudwatch_policy" {
 
 # give api gateway role permission to invoke authorizor lambda
 resource "aws_iam_role_policy" "api_gateway_role_cloudwatch_policy_invoke_authorizer_policy" {
-  name = "default"
-  role = "${aws_iam_role.api_gateway_role.id}"
+  name   = "default"
+  role   = "${aws_iam_role.api_gateway_role.id}"
 
   policy = <<EOF
 {
@@ -158,12 +160,12 @@ resource "aws_cloudwatch_log_group" "api_gateway_logs" {
 }
 
 resource "aws_s3_bucket" "log_bucket" {
-  bucket = "logs.cheaptree"
+  bucket = "${var.install_id}.logs.cheaptree"
   acl    = "private"
 }
 
 resource "aws_s3_bucket" "ui_bucket" {
-  bucket = "ui.cheaptree"
+  bucket = "${var.install_id}.ui.cheaptree"
   acl    = "public-read"
 
   policy = <<EOF
@@ -174,7 +176,7 @@ resource "aws_s3_bucket" "ui_bucket" {
     "Effect":"Allow",
     "Principal": "*",
     "Action":["s3:GetObject"],
-    "Resource":["arn:aws:s3:::ui.cheaptree/*"
+    "Resource":["arn:aws:s3:::${var.install_id}.ui.cheaptree/*"
   ]}
 ]
 }
@@ -195,7 +197,7 @@ resource "aws_lambda_function" "cors_lambda_function" {
   runtime          = "java8"
   environment {
     variables {
-      ALLOWED_CORS_DOMAINS = "https://${var.maternal_domain},https://${var.paternal_domain}"
+      ALLOWED_CORS_DOMAINS = "https://${var.maternal_domain},https://${var.paternal_domain},http://localhost:8080"
     }
   }
 }
@@ -212,7 +214,7 @@ module "hello_world_resource" {
   parent_resource_id   = "${aws_api_gateway_rest_api.main_api.root_resource_id}"
   account_id           = "${var.account_id}"
   cors_lambda_arn      = "${aws_lambda_function.cors_lambda_function.arn}"
-  allowed_cors_domains = "https://${var.maternal_domain},https://${var.paternal_domain}"
+  allowed_cors_domains = "https://${var.maternal_domain},https://${var.paternal_domain},http://localhost:8080"
   authorizer_id        = "${aws_api_gateway_authorizer.api_gateway_authorizer.id}"
 }
 

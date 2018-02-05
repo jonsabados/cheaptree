@@ -31,5 +31,5 @@ build the front end
 `cd ui && npm install && npm run build`
 
 push the front end up to s3:
-`aws s3 sync --delete ui/public/ s3://ui.cheaptree`
+`aws s3 sync --delete public/ s3://${var.install_id}.ui.cheaptree`
 

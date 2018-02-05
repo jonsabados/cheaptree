@@ -23,6 +23,7 @@
             <artifactId>aws-lambda-java-log4j2</artifactId>
             <version>1.0.0</version>
         </dependency>
+
     </dependencies>
 
     <build>

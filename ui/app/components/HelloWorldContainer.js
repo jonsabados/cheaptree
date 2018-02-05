@@ -1,16 +1,19 @@
-import React, { Component } from 'react';
-import { Container } from 'flux/utils';
+import React, {Component} from 'react';
+import {Container} from 'flux/utils';
 import HelloWorldStore from '../stores/HelloWorldStore';
-import helloWorldView from '../views/helloWorldView.jsx'
+import AppStore from '../stores/AppStore';
+import StateKeys from '../stores/StateKeys';
+import helloWorldView from '../views/helloWorldView.jsx';
 
 class HelloWorldContainer extends Component {
   static getStores() {
-    return [HelloWorldStore];
+    return [HelloWorldStore, AppStore];
   }
 
   static calculateState() {
     return {
-      sample: HelloWorldStore.getState()
+      sample : HelloWorldStore.getState(),
+      app    : AppStore.getState()
     };
   }
 
@@ -18,7 +21,11 @@ class HelloWorldContainer extends Component {
   }
 
   render() {
-    return helloWorldView(this.state.sample.get("sampleInput"), this.state.sample.get("sampleResult"));
+    return helloWorldView(
+      this.state.sample.get('sampleInput'),
+      this.state.sample.get('sampleResult'),
+      this.state.app.get(StateKeys.CURRENT_USER)
+    );
   }
 }
 

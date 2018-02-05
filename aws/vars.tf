@@ -1,5 +1,5 @@
 variable "region" {
-  default = "us-east-1"
+  default = "us-east-2"
 }
 
 variable "version" {
@@ -7,6 +7,7 @@ variable "version" {
 }
 
 variable "account_id" {}
+variable "install_id" {}
 variable "maternal_domain" {}
 variable "paternal_domain" {}
 variable "google_client_id" {}

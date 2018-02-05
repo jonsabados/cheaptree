@@ -1,9 +1,16 @@
+# certs for cloudfront must be in us-east-1 (WTF?) - so hardocded provider
+provider "aws" {
+  region = "us-east-1"
+  alias  = "cert-provider"
+}
+
 data "aws_route53_zone" "domain" {
   name         = "${var.domain_name}."
   private_zone = false
 }
 
 data "aws_acm_certificate" "api_cert" {
+  provider = "aws.cert-provider"
   domain   = "api.${var.domain_name}"
   statuses = [
     "ISSUED"
@@ -11,6 +18,7 @@ data "aws_acm_certificate" "api_cert" {
 }
 
 data "aws_acm_certificate" "ui_cert" {
+  provider = "aws.cert-provider"
   domain   = "${var.domain_name}"
   statuses = [
     "ISSUED"

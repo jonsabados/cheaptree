@@ -2,6 +2,7 @@ package com.jshnd.cheaptree.authorizer;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -12,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
 
 public class AuthorizerLambda implements RequestStreamHandler {
 
@@ -33,7 +35,12 @@ public class AuthorizerLambda implements RequestStreamHandler {
         LOG.debug("Initializing with client id " + clientId);
         final HttpTransport transport = new ApacheHttpTransport();
         final JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-        final GoogleTokenValidator tokenValidator = new GoogleTokenValidator(transport, jsonFactory, clientId);
+        final GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+                .setAudience(Collections.singletonList(clientId))
+                .build();
+        LOG.trace("Verifier built");
+
+        final GoogleTokenValidator tokenValidator = new GoogleTokenValidator(verifier);
         return new Authorizer(tokenValidator);
     }
 

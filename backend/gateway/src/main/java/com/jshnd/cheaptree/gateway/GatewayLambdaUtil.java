@@ -79,7 +79,7 @@ public class GatewayLambdaUtil {
             final String origin = request.getHeaders().get("origin");
             if (origin != null && allowedDomains.stream().anyMatch(d -> d.equals(origin))) {
                 headers.put("Access-Control-Allow-Origin", origin);
-                headers.put("Access-Control-Allow-Headers", "Cookie,Content-Type");
+                headers.put("Access-Control-Allow-Headers", "Cookie,Content-Type,Authorization");
                 headers.put("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,HEAD");
                 headers.put("Access-Control-Allow-Credentials", "true");
             }
